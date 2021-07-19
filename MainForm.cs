@@ -16,6 +16,7 @@ namespace WinPuzzle
       bool numbers = true;
       int[,] tiles;
       Image image;
+      bool imagePreview = false;
       bool solved = true;
       bool scrambled = false;
       int moves;
@@ -29,6 +30,13 @@ namespace WinPuzzle
       string[] textLines;
       ControlAnimationHandler animationHandler;
       float animateRatio;
+
+      string[] mainMenuLines = new string[]
+         {
+            "WinPuzzle",
+            "v1.0",
+            "Created by Taber\nwith a computer",
+         };
 
       enum AnimationState
       {
@@ -45,7 +53,6 @@ namespace WinPuzzle
       // * save high scores - fastest solve times (for each puzzle image)
       // * enable image invert, for all images
       // * option to change cursor tile draw style (checker dark/light, solid color...)
-      // * add some other new image logos (Edge, VS, Win10..?)
 
       ContextMenu contextMenu;
 
@@ -66,13 +73,7 @@ namespace WinPuzzle
 
          CreatePuzzle( size );
 
-         this.textLines = new string[]
-            {
-               "WinPuzzle",
-               "v1.0",
-               "Created by Taber",
-               "with a computer",
-            };
+         this.textLines = this.mainMenuLines;
 
          this.animationHandler = new ControlAnimationHandler();
          this.animationHandler.Duration = .5f;
@@ -100,17 +101,12 @@ namespace WinPuzzle
          // set text lines to menu, if just expanded
          if( this.animateState == AnimationState.Expand )
          {
-            this.textLines = new string[]
-               {
-                  "WinPuzzle",
-                  "v1.0",
-                  "Created by Taber",
-                  "with a computer",
-               };
+            this.textLines = this.mainMenuLines;
          }
          else
          {
             this.textLines = null;
+            this.imagePreview = false;
             //this.Invalidate();
          }
 
@@ -266,15 +262,15 @@ namespace WinPuzzle
          return rect;
       }
 
-      Rectangle GetTextRect( Rectangle puzzleRect )
+      Rectangle GetMenuRect( Rectangle puzzleRect )
       {
-         float textRatio = 0.8f;
-         int textWidth = (int)( puzzleRect.Width * textRatio );
-         int textHeight = (int)( puzzleRect.Height * textRatio );
-         int textX = puzzleRect.X + ( puzzleRect.Width - textWidth ) / 2;
-         int textY = puzzleRect.Y + ( puzzleRect.Height - textHeight ) / 2;
-         Rectangle textRect = new Rectangle( textX, textY, textWidth, textHeight );
-         return textRect;
+         float menuRatio = 0.8f;
+         int menuWidth = (int)( puzzleRect.Width * menuRatio );
+         int menuHeight = (int)( puzzleRect.Height * menuRatio );
+         int menuX = puzzleRect.X + ( puzzleRect.Width - menuWidth ) / 2;
+         int menuY = puzzleRect.Y + ( puzzleRect.Height - menuHeight ) / 2;
+         Rectangle menuRect = new Rectangle( menuX, menuY, menuWidth, menuHeight );
+         return menuRect;
       }
 
       protected override void OnPaint( PaintEventArgs e )
@@ -360,22 +356,24 @@ namespace WinPuzzle
          // draw interpolated menu/text rect
          if( this.animateState != AnimationState.Idle )
          {
-            Rectangle textRect = GetTextRect( puzzRect );
+            Rectangle menuRect = GetMenuRect( puzzRect );
             float t = this.animateState == AnimationState.Expand ? this.animateRatio : 1f - this.animateRatio;
-            Rectangle animRect = InterpolateRect( cursorRect, textRect, t );
+            Rectangle animRect = InterpolateRect( cursorRect, menuRect, t );
             DrawTextLines( g, null, animRect );
+            //DrawTextLines( g, this.textLines, animRect );
+         }
+         // draw image preview
+         else if( this.imagePreview )
+         {
+            Rectangle menuRect = GetMenuRect( puzzRect );
+            g.DrawImage( this.image, menuRect );
+            g.DrawRectangle( Pens.CornflowerBlue, menuRect );
          }
          // draw text lines
          else if( this.textLines != null )
          {
-            //float textRatio = 0.8f;
-            //int textWidth = (int)( width * textRatio );
-            //int textHeight = (int)( height * textRatio );
-            //int textX = startX + ( width - textWidth ) / 2;
-            //int textY = startY + ( height - textHeight ) / 2;
-            //Rectangle textRect = new Rectangle( textX, textY, textWidth, textHeight );
-            Rectangle textRect = GetTextRect( puzzRect );
-            DrawTextLines( g, this.textLines, textRect );   
+            Rectangle menuRect = GetMenuRect( puzzRect );
+            DrawTextLines( g, this.textLines, menuRect );   
          }
 
          solidBrush.Dispose();
@@ -459,7 +457,7 @@ namespace WinPuzzle
 
             float xLocCenter = textRect.X + textRect.Width / 2f;
             float yLocCenter;
-            Font currFont = font;
+            Font currFont;
 
             // draw lines
             for( int i = 0; i < textLines.Length; ++i )
@@ -572,6 +570,11 @@ namespace WinPuzzle
                break;
 
             case Keys.Space:
+               // show image preview
+               if( this.image != null )
+                  this.imagePreview = true;
+               this.animationHandler.Start();
+               break;
             case Keys.Escape:
                // show menu
                this.animationHandler.Start();
@@ -749,7 +752,9 @@ namespace WinPuzzle
                break;
 
             case "Help":
-               MessageBox.Show( "RTFM.\nWait, this is the manual... Sorry." );
+               if( this.image != null )
+                  this.imagePreview = true;
+               this.animationHandler.Start();
                break;
 
             case "MetalHelix.com":

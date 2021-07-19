@@ -152,6 +152,13 @@
     <EmbeddedResource Include="Images\15_WindowsPhoneLogo.png" />
     <EmbeddedResource Include="Images\16_ms-dos-logo.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\00_Microsoft_Edge_logo.png" />
+    <EmbeddedResource Include="Images\00_microsoft_visual_studio_logo.png" />
+    <EmbeddedResource Include="Images\00_Minesweeper_icon.png" />
+    <EmbeddedResource Include="Images\00_mspaint_icon.png" />
+    <EmbeddedResource Include="Images\00_windows-10-logo.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent />
