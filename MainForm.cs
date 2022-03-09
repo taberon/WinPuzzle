@@ -758,19 +758,7 @@ namespace WinPuzzle
                break;
 
             case "MetalHelix.com":
-               //System.Diagnostics.Process.Start( "explorer", "http://www.metalhelix.com" );
-               System.Diagnostics.Process.Start( "http://www.metalhelix.com" );
-               //System.Windows.Forms.Help.ShowHelp( this, "http://www.metalhelix.com" );
-
-               //System.Windows.Forms.LinkLabel
-               //System.Net.WebClient wc = new System.Net.WebClient();
-               //wc.DownloadFile( "http://www.metalhelix.com/test/dynpage/dynpage.php", "temp.txt" );
-               //object what = System.Windows.Forms.OSFeature.LayeredWindows;
-               //System.Windows.Forms.Screen
-               //System.Net.WebRequest webReq = System.Net.WebRequest.Create( "MetalHelix.com" );
-
-               //System.Web.Mail ... add ref to System.Web
-               //System.Web.Mail.SmtpMail.Send( 
+               System.Diagnostics.Process.Start( "https://www.metalhelix.com" );
 
                break;
          }
